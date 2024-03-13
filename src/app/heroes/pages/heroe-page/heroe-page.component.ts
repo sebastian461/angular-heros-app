@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-heroe-page',
+  selector: 'heroes-heroe-page',
   templateUrl: './heroe-page.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class HeroePageComponent {
-
-}
+export class HeroePageComponent {}

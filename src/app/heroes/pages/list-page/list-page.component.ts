@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-list-page',
+  selector: 'heroes-list-page',
   templateUrl: './list-page.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class ListPageComponent {
-
-}
+export class ListPageComponent {}
