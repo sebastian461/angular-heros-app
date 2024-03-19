@@ -1,13 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Publisher } from '../../interfaces/heroe.interface';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { Heroe, Publisher } from '../../interfaces/heroe.interface';
+import { HeroesService } from '../../services/heroes.service';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'heroes-new-page',
   templateUrl: './new-page.component.html',
   styles: [],
 })
-export class NewPageComponent {
+export class NewPageComponent implements OnInit {
   //formulario reactivo
   public heroeForm = new FormGroup({
     id: new FormControl(''),
@@ -30,10 +34,40 @@ export class NewPageComponent {
     },
   ];
 
+  constructor(
+    private heroeService: HeroesService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    if (!this.router.url.includes('edit')) return;
+
+    this.activatedRoute.params
+      .pipe(switchMap(({ id }) => this.heroeService.getHeroeById(id)))
+      .subscribe((heroe) => {
+        if (!heroe) return this.router.navigateByUrl('/');
+        this.heroeForm.reset(heroe);
+        return;
+      });
+  }
+
+  get getCurrentHeroe(): Heroe {
+    const heroe = this.heroeForm.value as Heroe;
+    return heroe;
+  }
+
   onSubmit(): void {
-    console.log({
-      formIsValid: this.heroeForm.valid,
-      value: this.heroeForm.value,
+    if (this.heroeForm.invalid) return;
+    if (this.getCurrentHeroe.id) {
+      this.heroeService.updateHeroe(this.getCurrentHeroe).subscribe((h) => {
+        //TODO mostrar snackbar
+      });
+      return;
+    }
+
+    this.heroeService.addHeroe(this.getCurrentHeroe).subscribe((h) => {
+      //TODO mostrar snackbar y navegar a heroes/edit/heroe.id
     });
   }
 }
